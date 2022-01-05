@@ -1,0 +1,6 @@
+name = "WordleSolver"
+uuid = "697f49a0-6da9-11ec-1a7e-43a2532b2fa8"
+authors = ["Aditya Sengupta"]
+version = "0.1.0"
+
+[deps]
