@@ -3,6 +3,8 @@ using ProgressMeter
 
 guess_numbers = zeros(Int, length(possibles.answers))
 
+use("wordle")
+
 # you should be able to rewrite this loop to not do N traversals
 # but that would take longer than the one time it'd take to run it
 @showprogress for i in 1:length(possibles.answers)

@@ -11413,4 +11413,4 @@ answers = [
   "zooms",
 ]
 
-wordle = PossibleWords(words, answers)
+wordmaster = PossibleWords(words, answers)
