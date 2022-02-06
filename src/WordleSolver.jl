@@ -10,7 +10,7 @@ module WordleSolver
     include("wordle.jl")
     include("wordmaster.jl")
 
-    possibles = wordmaster
+    possibles = wordle
 
     function use(name)
         global possibles = eval(Symbol(name))
@@ -23,6 +23,12 @@ module WordleSolver
     log2_safe(x) = x > 0 ? log2(x) : 0
     entropy(dist) = -sum(dist .* log2_safe.(dist))
 
+    """
+    Takes in the guessed word and the actual answer, and returns the Wordle match between them:
+    0 for grey (letter i in the query isn't in answer)
+    1 for yellow (letter i in the query is in the answer, in some position other than i)
+    2 for green (letter i in the query is letter i in the answer)
+    """
     function guess(query, answer)
         letters = countmap(answer)
     
@@ -43,8 +49,13 @@ module WordleSolver
         string(result...)
     end
 
+    """
+    Maximises (a slight approximation to) the differential entropy of the guesses over the corpus.
+    Takes in the corpus (a vector of Strings),
+    and returns the element of possibles.words that provides the best split across it.
+    """
     function choose(corpus)
-        if length(corpus) == 1
+        if length(corpus) <= 2
             return corpus[1]
         end
         is_known = [all(x[i] == corpus[1][i] for x in corpus) for i in 1:wordlength]
@@ -106,9 +117,10 @@ module WordleSolver
         end
     end
 
-    function play(answer; verbose=false)
+    function play(answer; verbose=true)
         i = 1
         corpus = copy(possibles.answers)
+        query = ""
         while (length(corpus) > 1) && (i <= 6)
             query = choose(corpus)
             if verbose
@@ -117,8 +129,12 @@ module WordleSolver
             i += 1
             corpus = constrain(corpus, query, guess(query, answer))
         end
-        if (length(corpus) == 1) && verbose
-            println(choose(corpus))
+        if length(corpus) == 1
+            if query == corpus[1]
+                i -= 1
+            elseif verbose
+                println(corpus[1])
+            end
         end
         i
     end
